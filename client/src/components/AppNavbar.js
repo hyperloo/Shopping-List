@@ -1,4 +1,9 @@
-import React, { useState, Component } from "react";
+import React, { useState, Component, Fragment } from "react";
+import RegisterModal from "./auth/RegisterModal";
+import Logout from "./auth/Logout";
+import LoginModal from "./auth/LoginModal";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
 
 import {
   Collapse,
@@ -8,11 +13,6 @@ import {
   NavbarBrand,
   Nav,
   NavItem,
-  NavLink,
-  UncontrolledDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
   NavbarText
 } from "reactstrap";
 
@@ -26,22 +26,40 @@ class AppNavbar extends Component {
   };
 
   render() {
+    const { isAuthenticated, user } = this.props.auth;
+
+    const authLinks = (
+      <Fragment>
+        <NavItem>
+          <NavbarText>
+            <strong>{user ? `Welcome ${user.name}` : ""}</strong>
+          </NavbarText>
+        </NavItem>
+        <NavItem>
+          <Logout />
+        </NavItem>
+      </Fragment>
+    );
+
+    const guestLinks = (
+      <Fragment>
+        <NavItem>
+          <RegisterModal />
+        </NavItem>
+        <NavItem>
+          <LoginModal />
+        </NavItem>
+      </Fragment>
+    );
     return (
       <div>
-        <Navbar color="light" light expand="md" className="mb-5">
+        <Navbar color="dark" dark expand="md" className="mb-5">
           <Container>
             <NavbarBrand href="/">Shopping Cart</NavbarBrand>
             <NavbarToggler onClick={this.toggle} />
             <Collapse isOpen={this.state.isOpen} navbar>
               <Nav className="ml-auto" navbar>
-                <NavItem>
-                  <NavLink href="/components/">Components</NavLink>
-                </NavItem>
-                <NavItem>
-                  <NavLink href="https://github.com/reactstrap/reactstrap">
-                    GitHub
-                  </NavLink>
-                </NavItem>
+                {isAuthenticated ? authLinks : guestLinks}
 
                 {/* <UncontrolledDropdown nav inNavbar>
                       <DropdownToggle nav caret>
@@ -55,7 +73,7 @@ class AppNavbar extends Component {
                       </DropdownMenu>
                     </UncontrolledDropdown> */}
               </Nav>
-              <NavbarText>Simple Text</NavbarText>
+              {/* <NavbarText>Simple Text</NavbarText> */}
             </Collapse>
           </Container>
         </Navbar>
@@ -64,4 +82,12 @@ class AppNavbar extends Component {
   }
 }
 
-export default AppNavbar;
+AppNavbar.propTypes = {
+  auth: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+  auth: state.auth
+});
+
+export default connect(mapStateToProps, {})(AppNavbar);

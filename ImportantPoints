@@ -1,0 +1,148 @@
+
+#### Here, int this tutorial, we care storing token in "local Storage". "token" is added itself to Storage but removed at the time of "Auth_error"/ "Login_Fail"
+        , etc by using function "removeItem('token')" on Local Storage;
+#### localStorage.setItem('items",value) set the item with the value in localStorage
+
+
+******************************* React-Redux ***********************************
+---> connect function from "react-redux" makes it possible to use redux actions in the component, that are imported form action/itemaction or any other files
+---> connect function has format like connect(para1, para2)(className) two parameters majorly, first in mapStateToProps which attaches the state of the redux store
+        from the reducer/index.js to the props of class which are then can be accessed using, this.props.isAuthenticated if an "variable" or this.props.object.var
+        if the mapped item is an object
+
+
+
+********************* "prop-types" ********************************
+---> Its is a npm package to validate the imported state objects data type in the given component from redux store. Refer ItemModal.js
+---> propTypes is Property of the class, towards its constituting imported props.
+
+==> propTypes being a property of the class can be used 
+a) inside the class as 
+static propTypes = {
+  isAuthenticated: PropTypes.bool,
+  error: PropTypes.object.isRequired
+};
+
+"""OR"""
+
+b) outside the class with classname
+class_Name.propTypes = {
+  isAuthenticated: PropTypes.bool,
+  error: PropTypes.object.isRequired
+};
+
+
+
+********************* Config ************************************
+----> Config npm package is for storing and encoding important data like "mongoURI", so that app can be safely saved on github without any piracy 
+issues. You can prefer to the config/keys.js and then compare it with default.json which will use this package
+
+
+
+************************** BCRYPT *********************************
+    bcrypt.genSalt first create the salt and then pass this salt to hashing function "bcrypt.hash" which takes the password, salt and an arrow function
+    with an error and generated hash of the password. This password is then appended to the saving newUser object using newUser,password = hash and then 
+    saved. 
+
+
+
+
+
+****************** JWT WEB TOKEN AUTHENTICATION **********************
+
+//200 -> ok 
+//404 -> not found
+//400 -> bad request
+//401 -> authorization denied
+
+
+---> JWT token authentication uses, this requires, "content-type" as "application/json" and "x-auth-token" as the token in local storage. This token is used in 
+        authentication by passing this token and this content-type to the server.
+
+---->  We can call any action from reducer(rootReducer imported in store.js ) using store in APP.js by just calling store.dispatch(function_name()), like in app.json
+
+
+
+1) register.js for registration
+---> during saving of the newUser, jwt generates a "signed token" using jwt.sign(taking payload ( here _id from db),jwtSecret and expiresIn(optional)).
+---> Payload may be any data that has to be important in authentication to generate "signed token". This token gat saved in local 
+     Storage  or httpOnlyCookie.
+---> Local Storage is not good as it may be accessible to any third party app website using your browser. So, it is stored in 
+     httpOnly cookie, a special kind of cookie that’s only sent in HTTP requests to the server, and it’s never accessible (both
+     for reading or writing) from JavaScript running in the browser.
+
+2) auth.js for login
+---> In login, the form data is posted to the server, which takes it as name,email,password. Mandatory fields like email and password
+     if not present, throws an error.
+---> If first step is alright, then a user is fond with this email using findone. If user not present, then it shows error.
+---> else Bcrypt uses its "compare" method to compare the password which has password from form and user.password from db.
+---> If this password match, then server again generates a signed token with _id from DB, jwtSecret from config and then gives a response.
+
+3) Middleware for access to specific routes authorization
+---> This middleware first takes the token saved in "x-http-token" from "req.header" of the access request to the server which is a special type of header
+     to save tokens, that cannot be altered by client.
+---> if then token is not preset, i.e. not logged in, then return error
+---> else, the token is verified using "jwt.verify" method to get the payload back (here _id of DB) to add it to the request object (which will be sent to server),
+      so that server can grant access.
+---> and teh next() is called
+
+
+
+
+
+*********************************** Mongoose ******************************
+
+====> mongoose have a ""SORT"" function which sorts data before returning <====
+
+------format----->
+/**** Method 1  ****/
+---> Item.find({}).sort({date :-1}).then(items => res.json(items));
+  
+/**** Method 2  ****/
+---> Item.find({})
+    .sort({ date: -1 })
+    //.then takes one parameter at one time in a function
+    .then(
+      items => {
+        //this is a function to be executed
+        res.json(items);
+      },
+      err => console.log(err) //this is function for error handling
+    );
+
+
+/**** Method 3  ****/
+---> Item.find({}, null, { sort: { date: -1 } }, (err, items) => {
+         if (err) {
+          res.status(404).json({ success: false });
+        } else {
+          res.json(items);
+        }
+    });
+
+  
+===<> sort({criteria}) can be used in mongoose in following ways
+
+    Post.find({}).sort('test').exec(function(err, docs) { ... });
+    Post.find({}).sort([['date', -1]]).exec(function(err, docs) { ... });
+    Post.find({}).sort({test: 1}).exec(function(err, docs) { ... });
+    Post.find({}, null, {sort: {date: 1}}, function(err, docs) { ... });
+    
+
+====> Mongoose also have a ""SELECT"" method  <==========
+---> through which we can exclude any column like password in user profile to see in front end.
+---> This can be done like find().select("-password).then(); //this '-' before passwords exclude password fields
+
+
+
+
+ *********************************** REDUX ************************************
+
+-> "getState()" is used in Actions to be performed to get the state from Reducers to action files
+-> "Dispatch" from "redux-thunk" is used as "async await", since they are not applicable in redux. They dispatch action after the action is fully
+   completed. 
+   ---> Refer to ItemActions.js, the dispatch is used in all functions except LoadItems, as it is only functioned to change state of ItemReducer.
+        therefore, it is called before the geRequest in "getItems" using "dispatch, so that get request only work after the state is updated from
+        isLoading: false to true and then only get request get executed.
+        ## We can also remove that "LoadItems" function from dispatch by directly writing dispatch({type: Items_LOADING}) as in AuthActions file.
+

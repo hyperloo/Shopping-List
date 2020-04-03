@@ -1,0 +1,4 @@
+{
+  "mongoURI": "mongodb+srv://HimanshuSingh:Idea0362@cluster0-jwfcs.mongodb.net/MernStack?retryWrites=true&w=majority",
+  "jwtSecret": "slw_nrs23f#34rfd"
+}
