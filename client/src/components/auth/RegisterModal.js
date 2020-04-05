@@ -35,6 +35,7 @@ class RegisterModal extends Component {
         this.setState({ msg: null });
       }
     }
+      
     if (this.state.modal) {
       if (isAuthenticated) {
         this.toggle();
