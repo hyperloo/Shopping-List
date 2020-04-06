@@ -40,7 +40,15 @@ class App extends React.Component {
                   This App is developed by Himanshu
                 </ToastHeader>
                 <ToastBody>
-                  This App is a MERN Stack App using Redux which is a basic APP.
+                  This App is a <b>MERN Stack App</b> using Redux which is a
+                  basic APP.
+                  <br />
+                  This App uses <b>Axios</b> for queries, <b>Bcrypt</b> for
+                  Hashing, "<b>JWT</b>" Web Tokens,
+                  <b>MongoDB</b> as DB & <b>Mongoose</b> for DB interactions,{" "}
+                  <b>Bootstrap</b> & <b>ReactStrap</b> for styling,{" "}
+                  <b>React-Transition-Group</b> for Transitions, <b>Redux</b> &{" "}
+                  <b>Redux-Thunk</b>.
                   <br />
                   This app has following features:
                   <br />
