@@ -139,6 +139,8 @@ issues. You can prefer to the config/keys.js and then compare it with default.js
  *********************************** REDUX ************************************
 
 -> "getState()" is used in Actions to be performed to get the state from Reducers to action files
+-> getState() is a redux store function which fetches current state of the tree from store. It refers to the store.js which also has index.js 
+  imported from reducers where all other reducers are combined.
 -> "Dispatch" from "redux-thunk" is used as "async await", since they are not applicable in redux. They dispatch action after the action is fully
    completed. 
    ---> Refer to ItemActions.js, the dispatch is used in all functions except LoadItems, as it is only functioned to change state of ItemReducer.
@@ -146,3 +148,8 @@ issues. You can prefer to the config/keys.js and then compare it with default.js
         isLoading: false to true and then only get request get executed.
         ## We can also remove that "LoadItems" function from dispatch by directly writing dispatch({type: Items_LOADING}) as in AuthActions file.
 
+-> tokenConfig(getState) is for attaching the "header" of the request like 'content-type':'application/json' & 'x-auth-token':'token' from jwt.
+  It gives the server information about if the user login or not and also headers. If token is not there, then it will return an err response 
+  otherwise data.
+
+-> getState is passed with dispatch for which the state of redux will change and also for authentication purpose.
